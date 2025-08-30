@@ -20,51 +20,37 @@ CREATE TABLE Students (
 );
 
 -- ---------- 3. Classes ----------
-CREATE TABLE Classes (
-    class_id SERIAL PRIMARY KEY,
-    class_name VARCHAR(100) NOT NULL,
+CREATE TABLE Subjects (
+    subject_id SERIAL PRIMARY KEY,
+    subject_name VARCHAR(100) NOT NULL,
     teacher_id INT NOT NULL,
     FOREIGN KEY (teacher_id) REFERENCES Teachers(teacher_id)
 );
 
--- ---------- 4. Enrollments (Students <-> Classes) ----------
-CREATE TABLE Enrollments (
-    enrollment_id SERIAL PRIMARY KEY,
-    student_id INT NOT NULL,
-    class_id INT NOT NULL,
-    FOREIGN KEY (student_id) REFERENCES Students(student_id),
-    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
-    UNIQUE(student_id, class_id)
+-- ---------- 4. Ongoing_classes (Timestamp <-> Classes) ----------
+CREATE TABLE Ongoing_classes (
+	ongoing_class_id SERIAL PRIMARY KEY,
+	subject_id INT NOT NULL,
+	total_class_completed INT,
+	marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id)
 );
 
--- ---------- 5. Sessions (QR linked to class occurrence) ----------
-CREATE TABLE Sessions (
-    session_id SERIAL PRIMARY KEY,
-    class_id INT NOT NULL,
-    session_date DATE NOT NULL,
-    start_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP NOT NULL,
-    qr_token VARCHAR(255) UNIQUE NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (class_id) REFERENCES Classes(class_id)
-);
-
--- ---------- 6. Attendance ----------
+-- ---------- 5. Attendance ----------
 CREATE TABLE Attendance (
     attendance_id SERIAL PRIMARY KEY,
-    session_id INT NOT NULL,
+    subject_id INT NOT NULL,
     student_id INT NOT NULL,
     marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (session_id) REFERENCES Sessions(session_id),
-    FOREIGN KEY (student_id) REFERENCES Students(student_id),
-    UNIQUE(session_id, student_id)
+    FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id)
 );
 
 
 -- ======================================================
 -- SAMPLE QUERIES
 -- ======================================================
-
+/*
 -- 1. Teacher: View attendance for a class
 -- Shows each student and whether attended in a given session
 SELECT s.name, a.session_id, a.marked_at
@@ -87,5 +73,46 @@ FROM Sessions se
 WHERE se.qr_token = 'xyz123'
   AND NOW() BETWEEN se.start_time AND se.end_time
   AND se.is_active = TRUE;
+  */
 
 -- (If the above insert fails = invalid or expired QR)
+
+
+
+-- QUERY FOR UPDATING THE ONGOING_CLASSES TABLE 
+1.
+/*
+SELECT total_class_completed FROM Ongoing_classes 
+'INSERT INTO Ongoing_classes (subject_id, total_class_completed, marked_at) 
+   VALUES ($1, $2, CURRENT_TIMESTAMP)' ,
+   [req.user.subject_id, totalCompleted + 1]
+   */
+
+   await db.query(
+  "UPDATE Ongoing_classes SET subject_id = $1, total_class_completed = total_class_completed + 1, marked_at = CURRENT_TIMESTAMP",
+  [newSubjectId]
+);
+
+
+
+
+-- MARKING ATTENDANCE BY SCANNING QR_CODE
+2.
+
+/*
+const query = `
+  INSERT INTO Attendance (subject_id, student_id, marked_at)
+  SELECT $1, $2, NOW()
+  FROM Ongoing_classes oc
+  WHERE oc.subject_id = $1
+    AND NOW() BETWEEN oc.marked_at AND oc.marked_at + INTERVAL '1 hour';
+`;
+
+await db.query(query, [subjectId, studentId]);
+*/
+
+INSERT INTO Attendance (subject_id, student_id, marked_at)
+SELECT 2, 4, NOW()
+FROM Ongoing_classes oc
+WHERE oc.subject_id = 2
+  AND NOW() BETWEEN oc.marked_at AND oc.marked_at + INTERVAL '1 hour';
