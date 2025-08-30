@@ -1,5 +1,4 @@
 # attendance_kivy.py
-# Kivy port of the provided Tkinter attendance system.
 # All non-GUI logic (QR gen, scan, CSV update, WiFi check, credentials) is preserved.
 
 import os
@@ -346,49 +345,140 @@ class TeacherLoginScreen(Screen):
 class StudentDashboardScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation="vertical", padding=20, spacing=15)
-        layout.add_widget(Label(text="Scan your QR Code", font_size=22, size_hint=(1, 0.15)))
+        with self.canvas.before:
+            Color(rgba=get_color_from_hex("#f0f4f8ff"))
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+        self.bind(size=self._update_bg_rect, pos=self._update_bg_rect)
 
-        scan_btn = Button(text="Scan QR Code", size_hint=(1, 0.12))
-        scan_btn.bind(on_press=lambda inst: App.get_running_app().start_scan_thread())
-        layout.add_widget(scan_btn)
+        self.heading = Label(
+            text="[b]Scan your QR Code[/b]",
+            markup=True,
+            font_size=26,
+            color=get_color_from_hex("#22223bff"),
+            size_hint=(None, None),
+            size=(400, 50),
+            pos_hint={"center_x": 0.5, "top": 0.92}
+        )
+        self.add_widget(self.heading)
 
-        view_attendance_btn = Button(text="View Attendance", size_hint=(1, 0.12))
-        view_attendance_btn.bind(on_press=lambda inst: App.get_running_app().show_student_attendance_screen())
-        layout.add_widget(view_attendance_btn)
+        self.scan_btn = Button(
+            text="Scan QR Code",
+            font_size=20,
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.75},
+            background_color=get_color_from_hex("#4ea8deff"),
+            color=get_color_from_hex("#ffffffff"),
+            bold=True,
+            background_normal=""
+        )
+        self.scan_btn.bind(on_press=lambda inst: App.get_running_app().start_scan_thread())
+        self.add_widget(self.scan_btn)
 
-        back_btn = Button(text="Logout", size_hint=(1, 0.12))
-        back_btn.bind(on_press=lambda inst: App.get_running_app().logout_to_login())
-        layout.add_widget(back_btn)
+        self.view_attendance_btn = Button(
+            text="View Attendance",
+            font_size=20,
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.62},
+            background_color=get_color_from_hex("#62AFE2FF"),
+            color=get_color_from_hex("#ffffffff"),
+            bold=True,
+            background_normal=""
+        )
+        self.view_attendance_btn.bind(on_press=lambda inst: App.get_running_app().show_student_attendance_screen())
+        self.add_widget(self.view_attendance_btn)
 
-        self.add_widget(layout)
+        self.back_btn = Button(
+            text="Logout",
+            font_size=20,
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.49},
+            background_color=get_color_from_hex("#adb5bdff"),
+            color=get_color_from_hex("#22223bff"),
+            bold=True,
+            background_normal=""
+        )
+        self.back_btn.bind(on_press=lambda inst: App.get_running_app().logout_to_login())
+        self.add_widget(self.back_btn)
+
+    def _update_bg_rect(self, *args):
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
 
 
 class TeacherDashboardScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.class_id_label = Label(text="Teacher Dashboard", font_size=20, size_hint=(1, 0.12))
+        with self.canvas.before:
+            Color(rgba=get_color_from_hex("#f0f4f8ff"))
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+        self.bind(size=self._update_bg_rect, pos=self._update_bg_rect)
 
-        layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
-        layout.add_widget(self.class_id_label)
+        self.class_id_label = Label(
+            text="Teacher Dashboard",
+            font_size=26,
+            markup=True,
+            color=get_color_from_hex("#22223bff"),
+            size_hint=(None, None),
+            size=(400, 50),
+            pos_hint={"center_x": 0.5, "top": 0.92}
+        )
+        self.add_widget(self.class_id_label)
 
-        # Kivy Image widget to show saved QR picture (source updated when QR generated)
-        self.qr_image = KivyImage(size_hint=(1, 0.6))
-        layout.add_widget(self.qr_image)
+        self.qr_image = KivyImage(
+            size_hint=(None, None),
+            size=(200, 200),
+            pos_hint={"center_x": 0.5, "top": 0.75}
+        )
+        self.add_widget(self.qr_image)
 
-        gen_btn = Button(text="Generate QR", size_hint=(1, 0.12))
+        gen_btn = Button(
+            text="Generate QR",
+            font_size=20,
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.55},
+            background_color=get_color_from_hex("#488155ff"),
+            color=get_color_from_hex("#ffffffff"),
+            bold=True,
+            background_normal=""
+        )
         gen_btn.bind(on_press=lambda inst: App.get_running_app().generate_qr_current_class())
-        layout.add_widget(gen_btn)
+        self.add_widget(gen_btn)
 
-        view_attendance_btn = Button(text="View Attendance", size_hint=(1, 0.12))
+        view_attendance_btn = Button(
+            text="View Attendance",
+            font_size=20,
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.42},
+            background_color=get_color_from_hex("#488155ff"),
+            color=get_color_from_hex("#ffffffff"),
+            bold=True,
+            background_normal=""
+        )
         view_attendance_btn.bind(on_press=lambda inst: App.get_running_app().show_teacher_attendance_screen())
-        layout.add_widget(view_attendance_btn)
+        self.add_widget(view_attendance_btn)
 
-        back_btn = Button(text="Logout", size_hint=(1, 0.12))
+        back_btn = Button(
+            text="Logout",
+            font_size=20,
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.29},
+            background_color=get_color_from_hex("#adb5bdff"),
+            color=get_color_from_hex("#22223bff"),
+            bold=True,
+            background_normal=""
+        )
         back_btn.bind(on_press=lambda inst: App.get_running_app().logout_to_login())
-        layout.add_widget(back_btn)
+        self.add_widget(back_btn)
 
-        self.add_widget(layout)
+    def _update_bg_rect(self, *args):
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
 
 
 class AttendanceViewScreen(Screen):
