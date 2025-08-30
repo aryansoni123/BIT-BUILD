@@ -20,7 +20,7 @@ class StudentAttendanceScreen(Screen):
 
         # --- Background image ---
         with self.canvas.before:
-            self.bg_rect = Rectangle(source="bg4.png", size=self.size, pos=self.pos)
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos, color=(1, 1, 1, 1))
         self.bind(size=self._update_bg_rect, pos=self._update_bg_rect)
 
         # --- Main layout ---
@@ -63,6 +63,7 @@ class StudentAttendanceScreen(Screen):
     def populate_for_student(self, student_name):
         """Read CSV, find the row and populate subject/value pairs."""
         self.grid.clear_widgets()
+        self.grid.spacing = (0, 20)
         try:
             df = pd.read_csv(CSV_FILE)
             if student_name not in df["Name"].values:
@@ -72,8 +73,22 @@ class StudentAttendanceScreen(Screen):
             subjects = list(student_attendance.columns)
             values = student_attendance.iloc[0].values
             for s, v in zip(subjects, values):
-                self.grid.add_widget(Label(text=str(s)))
-                self.grid.add_widget(Label(text=str(v)))
+                subject_label = Label(
+                    text=str(s),
+                    color=(0, 0, 0, 1),  # Black color
+                    font_size='16sp',     # Larger font size
+                    size_hint_y=None,
+                    height=40             # Fixed height for each row
+                )
+                value_label = Label(
+                    text=str(v),
+                    color=(0, 0, 0, 1),   # Black color
+                    font_size='16sp',      # Larger font size
+                    size_hint_y=None,
+                    height=40              # Fixed height for each row
+                )
+                self.grid.add_widget(subject_label)
+                self.grid.add_widget(value_label)
             self.title_label.text = f"Attendance - {student_name}"
         except Exception as e:
             App.get_running_app().popup("Error", f"Failed to load attendance: {e}")
