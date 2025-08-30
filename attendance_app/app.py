@@ -36,7 +36,7 @@ from screens.student_attendance import StudentAttendanceScreen
 
 class AttendanceApp(App):
     def build(self):
-        ensure_attendance_csv()
+        # ensure_attendance_csv()
         Window.size = (450, 700)
 
         self.sm = ScreenManager()
@@ -179,17 +179,15 @@ class AttendanceApp(App):
             self.popup("Error", "Invalid QR Code")
 
     # ---------------- screens to show attendance ----------------
-    def show_teacher_attendance_screen(self):
-        try:
-            df = pd.read_csv(CSV_FILE)
-            self.attendance_view_screen.populate_from_csv(df)
-            self.go_to_screen("attendance_view")
-        except Exception as e:
-            self.popup("Error", f"Failed to load attendance: {e}")
-
     def show_student_attendance_screen(self):
+        """Display attendance screen for currently logged in student"""
         if not self.student_name:
             self.popup("Error", "No student logged in")
             return
-        self.student_attendance_screen.populate_for_student(self.student_name)
-        self.go_to_screen("student_attendance")
+
+        try:
+            # populate_for_student now uses database queries instead of CSV
+            self.student_attendance_screen.populate_for_student(self.student_name)
+            self.go_to_screen("student_attendance")
+        except Exception as e:
+            self.popup("Error", f"Failed to load attendance data: {e}")
