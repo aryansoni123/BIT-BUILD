@@ -24,6 +24,8 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 from kivy.clock import mainthread
 from kivy.core.window import Window
+from kivy.graphics import Color, Rectangle
+from kivy.utils import get_color_from_hex
 
 # ---------- Data / constants (unchanged from your original code) ----------
 TEACHER_CREDENTIALS = {
@@ -99,20 +101,37 @@ def ensure_attendance_csv():
 
 
 # ---------- Screens (Kivy) ----------
+
 class LoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Root layout for login screen
-        layout = BoxLayout(orientation="vertical", padding=20, spacing=20)
-        layout.add_widget(Label(text="Attendance System", font_size=28, size_hint=(1, 0.2)))
+        layout = BoxLayout(orientation="vertical", padding=30, spacing=30, size_hint=(.9, .9), pos_hint={"center_x": .5, "center_y": .5})
+        layout.canvas.before.add(Color(rgba=get_color_from_hex("#f0f4f8ff")))
+        layout.canvas.before.add(Rectangle(size=self.size, pos=self.pos))
+        heading = Label(text="[b]Attendance System[/b]", markup=True, font_size=32, color=get_color_from_hex("#ffffffff"), size_hint=(1, 0.2))
+        layout.add_widget(heading)
 
-        # Student Login button -> switch to student login screen
-        btn_student = Button(text="Student Login", font_size=18, size_hint=(1, 0.15))
+        btn_student = Button(
+            text="Student Login",
+            font_size=20,
+            size_hint=(1, 0.15),
+            background_color=get_color_from_hex("#4ea8deff"),
+            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            bold=True,
+            background_normal=""
+        )
         btn_student.bind(on_press=lambda inst: App.get_running_app().go_to_screen("student_login"))
         layout.add_widget(btn_student)
 
-        # Teacher Login button -> switch to teacher login screen
-        btn_teacher = Button(text="Teacher Login", font_size=18, size_hint=(1, 0.15))
+        btn_teacher = Button(
+            text="Teacher Login",
+            font_size=20,
+            size_hint=(1, 0.15),
+            background_color=get_color_from_hex("#9d4eddff"),
+            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            bold=True,
+            background_normal=""
+        )
         btn_teacher.bind(on_press=lambda inst: App.get_running_app().go_to_screen("teacher_login"))
         layout.add_widget(btn_teacher)
 
@@ -122,22 +141,38 @@ class LoginScreen(Screen):
 class StudentLoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
+        layout = BoxLayout(orientation="vertical", padding=30, spacing=18, size_hint=(.9, .9), pos_hint={"center_x": .5, "center_y": .5})
+        layout.canvas.before.add(Color(rgba=get_color_from_hex("#f0f4f8ff")))
+        layout.canvas.before.add(Rectangle(size=self.size, pos=self.pos))
 
-        layout.add_widget(Label(text="Student Login", font_size=22, size_hint=(1, 0.15)))
-        layout.add_widget(Label(text="User ID:", size_hint=(1, 0.08)))
-        self.user_id_input = TextInput(multiline=False, size_hint=(1, 0.1))
+        layout.add_widget(Label(text="[b]Student Login[/b]", markup=True, font_size=26, color=get_color_from_hex("#22223bff"), size_hint=(1, 0.15)))
+        layout.add_widget(Label(text="User ID:", size_hint=(1, 0.08), color=get_color_from_hex("#ffffffff")))
+        self.user_id_input = TextInput(multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#595996ff"))
         layout.add_widget(self.user_id_input)
 
-        layout.add_widget(Label(text="Password:", size_hint=(1, 0.08)))
-        self.password_input = TextInput(password=True, multiline=False, size_hint=(1, 0.1))
+        layout.add_widget(Label(text="Password:", size_hint=(1, 0.08), color=get_color_from_hex("#ffffffff")))
+        self.password_input = TextInput(password=True, multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#22223bff"))
         layout.add_widget(self.password_input)
 
-        login_btn = Button(text="Login", size_hint=(1, 0.12))
+        login_btn = Button(
+            text="Login",
+            size_hint=(1, 0.12),
+            background_color=get_color_from_hex("#4ea8deff"),
+            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            bold=True,
+            background_normal=""
+        )
         login_btn.bind(on_press=self.attempt_login)
         layout.add_widget(login_btn)
 
-        back_btn = Button(text="Back", size_hint=(1, 0.12))
+        back_btn = Button(
+            text="Back",
+            size_hint=(1, 0.12),
+            background_color=get_color_from_hex("#adb5bdff"),
+            color=get_color_from_hex("#22223bff"),  # already 8-digit hex
+            bold=True,
+            background_normal=""
+        )
         back_btn.bind(on_press=lambda inst: App.get_running_app().go_to_screen("login"))
         layout.add_widget(back_btn)
 
@@ -152,22 +187,38 @@ class StudentLoginScreen(Screen):
 class TeacherLoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
+        layout = BoxLayout(orientation="vertical", padding=30, spacing=18, size_hint=(.9, .9), pos_hint={"center_x": .5, "center_y": .5})
+        layout.canvas.before.add(Color(rgba=get_color_from_hex("#f0f4f8ff")))
+        layout.canvas.before.add(Rectangle(size=self.size, pos=self.pos))
 
-        layout.add_widget(Label(text="Teacher Login", font_size=22, size_hint=(1, 0.15)))
-        layout.add_widget(Label(text="User ID:", size_hint=(1, 0.08)))
-        self.user_id_input = TextInput(multiline=False, size_hint=(1, 0.1))
+        layout.add_widget(Label(text="[b]Teacher Login[/b]", markup=True, font_size=26, color=get_color_from_hex("#22223bff"), size_hint=(1, 0.15)))
+        layout.add_widget(Label(text="User ID:", size_hint=(1, 0.08), color=get_color_from_hex("#22223bff")))
+        self.user_id_input = TextInput(multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#22223bff"))
         layout.add_widget(self.user_id_input)
 
-        layout.add_widget(Label(text="Password:", size_hint=(1, 0.08)))
-        self.password_input = TextInput(password=True, multiline=False, size_hint=(1, 0.1))
+        layout.add_widget(Label(text="Password:", size_hint=(1, 0.08), color=get_color_from_hex("#22223bff")))
+        self.password_input = TextInput(password=True, multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#22223bff"))
         layout.add_widget(self.password_input)
 
-        login_btn = Button(text="Login", size_hint=(1, 0.12))
+        login_btn = Button(
+            text="Login",
+            size_hint=(1, 0.12),
+            background_color=get_color_from_hex("#9d4eddff"),
+            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            bold=True,
+            background_normal=""
+        )
         login_btn.bind(on_press=self.attempt_login)
         layout.add_widget(login_btn)
 
-        back_btn = Button(text="Back", size_hint=(1, 0.12))
+        back_btn = Button(
+            text="Back",
+            size_hint=(1, 0.12),
+            background_color=get_color_from_hex("#adb5bdff"),
+            color=get_color_from_hex("#22223bff"),  # already 8-digit hex
+            bold=True,
+            background_normal=""
+        )
         back_btn.bind(on_press=lambda inst: App.get_running_app().go_to_screen("login"))
         layout.add_widget(back_btn)
 
@@ -487,3 +538,6 @@ class AttendanceApp(App):
 
 if __name__ == "__main__":
     AttendanceApp().run()
+
+# To install the required packages, run the following command:
+# pip install kivy opencv-python pyzbar pillow pandas qrcode
