@@ -105,78 +105,143 @@ def ensure_attendance_csv():
 class LoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation="vertical", padding=30, spacing=30, size_hint=(.9, .9), pos_hint={"center_x": .5, "center_y": .5})
-        layout.canvas.before.add(Color(rgba=get_color_from_hex("#f0f4f8ff")))
-        layout.canvas.before.add(Rectangle(size=self.size, pos=self.pos))
-        heading = Label(text="[b]Attendance System[/b]", markup=True, font_size=32, color=get_color_from_hex("#ffffffff"), size_hint=(1, 0.2))
-        layout.add_widget(heading)
+        with self.canvas.before:
+            Color(rgba=get_color_from_hex("#8F9198FF"))
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+        self.bind(size=self._update_bg_rect, pos=self._update_bg_rect)
 
-        btn_student = Button(
+        # Absolute positioning for a centered column
+        self.heading = Label(
+            text="[b]Attendance System[/b]",
+            markup=True,
+            font_size=32,
+            color=get_color_from_hex("#FFFFFFFF"),
+            size_hint=(None, None),
+            size=(400, 60),
+            pos_hint={"center_x": 0.5, "top": 0.92}
+        )
+        self.add_widget(self.heading)
+
+        self.btn_student = Button(
             text="Student Login",
             font_size=20,
-            size_hint=(1, 0.15),
-            background_color=get_color_from_hex("#4ea8deff"),
-            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.75},
+            background_color=get_color_from_hex("#62AFE2FF"),
+            color=get_color_from_hex("#ffffffff"),
             bold=True,
             background_normal=""
         )
-        btn_student.bind(on_press=lambda inst: App.get_running_app().go_to_screen("student_login"))
-        layout.add_widget(btn_student)
+        self.btn_student.bind(on_press=lambda inst: App.get_running_app().go_to_screen("student_login"))
+        self.add_widget(self.btn_student)
 
-        btn_teacher = Button(
+        self.btn_teacher = Button(
             text="Teacher Login",
             font_size=20,
-            size_hint=(1, 0.15),
-            background_color=get_color_from_hex("#9d4eddff"),
-            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            size_hint=(None, None),
+            size=(320, 60),
+            pos_hint={"center_x": 0.5, "top": 0.62},
+            background_color=get_color_from_hex("#488155ff"),
+            color=get_color_from_hex("#ffffffff"),
             bold=True,
             background_normal=""
         )
-        btn_teacher.bind(on_press=lambda inst: App.get_running_app().go_to_screen("teacher_login"))
-        layout.add_widget(btn_teacher)
+        self.btn_teacher.bind(on_press=lambda inst: App.get_running_app().go_to_screen("teacher_login"))
+        self.add_widget(self.btn_teacher)
 
-        self.add_widget(layout)
+    def _update_bg_rect(self, *args):
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
 
 
 class StudentLoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation="vertical", padding=30, spacing=18, size_hint=(.9, .9), pos_hint={"center_x": .5, "center_y": .5})
-        layout.canvas.before.add(Color(rgba=get_color_from_hex("#f0f4f8ff")))
-        layout.canvas.before.add(Rectangle(size=self.size, pos=self.pos))
+        with self.canvas.before:
+            Color(rgba=get_color_from_hex("#f0f4f8ff"))
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+        self.bind(size=self._update_bg_rect, pos=self._update_bg_rect)
 
-        layout.add_widget(Label(text="[b]Student Login[/b]", markup=True, font_size=26, color=get_color_from_hex("#22223bff"), size_hint=(1, 0.15)))
-        layout.add_widget(Label(text="User ID:", size_hint=(1, 0.08), color=get_color_from_hex("#ffffffff")))
-        self.user_id_input = TextInput(multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#595996ff"))
-        layout.add_widget(self.user_id_input)
+        self.heading = Label(
+            text="[b]Student Login[/b]",
+            markup=True,
+            font_size=26,
+            color=get_color_from_hex("#22223bff"),
+            size_hint=(None, None),
+            size=(400, 50),
+            pos_hint={"center_x": 0.5, "top": 0.92}
+        )
+        self.add_widget(self.heading)
 
-        layout.add_widget(Label(text="Password:", size_hint=(1, 0.08), color=get_color_from_hex("#ffffffff")))
-        self.password_input = TextInput(password=True, multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#22223bff"))
-        layout.add_widget(self.password_input)
+        self.label_user = Label(
+            text="User ID:",
+            size_hint=(None, None),
+            size=(120, 30),
+            color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.80}
+        )
+        self.add_widget(self.label_user)
 
-        login_btn = Button(
+        self.user_id_input = TextInput(
+            multiline=False,
+            size_hint=(None, None),
+            size=(280, 40),
+            background_color=get_color_from_hex("#e0e1ddff"),
+            foreground_color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.75}
+        )
+        self.add_widget(self.user_id_input)
+
+        self.label_pass = Label(
+            text="Password:",
+            size_hint=(None, None),
+            size=(120, 30),
+            color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.70}
+        )
+        self.add_widget(self.label_pass)
+
+        self.password_input = TextInput(
+            password=True,
+            multiline=False,
+            size_hint=(None, None),
+            size=(280, 40),
+            background_color=get_color_from_hex("#e0e1ddff"),
+            foreground_color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.65}
+        )
+        self.add_widget(self.password_input)
+
+        self.login_btn = Button(
             text="Login",
-            size_hint=(1, 0.12),
+            size_hint=(None, None),
+            size=(200, 50),
+            pos_hint={"center_x": 0.5, "top": 0.55},
             background_color=get_color_from_hex("#4ea8deff"),
-            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            color=get_color_from_hex("#ffffffff"),
             bold=True,
             background_normal=""
         )
-        login_btn.bind(on_press=self.attempt_login)
-        layout.add_widget(login_btn)
+        self.login_btn.bind(on_press=self.attempt_login)
+        self.add_widget(self.login_btn)
 
-        back_btn = Button(
+        self.back_btn = Button(
             text="Back",
-            size_hint=(1, 0.12),
+            size_hint=(None, None),
+            size=(200, 50),
+            pos_hint={"center_x": 0.5, "top": 0.45},
             background_color=get_color_from_hex("#adb5bdff"),
-            color=get_color_from_hex("#22223bff"),  # already 8-digit hex
+            color=get_color_from_hex("#22223bff"),
             bold=True,
             background_normal=""
         )
-        back_btn.bind(on_press=lambda inst: App.get_running_app().go_to_screen("login"))
-        layout.add_widget(back_btn)
+        self.back_btn.bind(on_press=lambda inst: App.get_running_app().go_to_screen("login"))
+        self.add_widget(self.back_btn)
 
-        self.add_widget(layout)
+    def _update_bg_rect(self, *args):
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
 
     def attempt_login(self, instance):
         user_id = self.user_id_input.text.strip()
@@ -187,42 +252,90 @@ class StudentLoginScreen(Screen):
 class TeacherLoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation="vertical", padding=30, spacing=18, size_hint=(.9, .9), pos_hint={"center_x": .5, "center_y": .5})
-        layout.canvas.before.add(Color(rgba=get_color_from_hex("#f0f4f8ff")))
-        layout.canvas.before.add(Rectangle(size=self.size, pos=self.pos))
+        with self.canvas.before:
+            Color(rgba=get_color_from_hex("#f0f4f8ff"))
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+        self.bind(size=self._update_bg_rect, pos=self._update_bg_rect)
 
-        layout.add_widget(Label(text="[b]Teacher Login[/b]", markup=True, font_size=26, color=get_color_from_hex("#22223bff"), size_hint=(1, 0.15)))
-        layout.add_widget(Label(text="User ID:", size_hint=(1, 0.08), color=get_color_from_hex("#22223bff")))
-        self.user_id_input = TextInput(multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#22223bff"))
-        layout.add_widget(self.user_id_input)
+        self.heading = Label(
+            text="[b]Teacher Login[/b]",
+            markup=True,
+            font_size=26,
+            color=get_color_from_hex("#22223bff"),
+            size_hint=(None, None),
+            size=(400, 50),
+            pos_hint={"center_x": 0.5, "top": 0.92}
+        )
+        self.add_widget(self.heading)
 
-        layout.add_widget(Label(text="Password:", size_hint=(1, 0.08), color=get_color_from_hex("#22223bff")))
-        self.password_input = TextInput(password=True, multiline=False, size_hint=(1, 0.1), background_color=get_color_from_hex("#e0e1ddff"), foreground_color=get_color_from_hex("#22223bff"))
-        layout.add_widget(self.password_input)
+        self.label_user = Label(
+            text="User ID:",
+            size_hint=(None, None),
+            size=(120, 30),
+            color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.80}
+        )
+        self.add_widget(self.label_user)
 
-        login_btn = Button(
+        self.user_id_input = TextInput(
+            multiline=False,
+            size_hint=(None, None),
+            size=(280, 40),
+            background_color=get_color_from_hex("#e0e1ddff"),
+            foreground_color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.75}
+        )
+        self.add_widget(self.user_id_input)
+
+        self.label_pass = Label(
+            text="Password:",
+            size_hint=(None, None),
+            size=(120, 30),
+            color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.70}
+        )
+        self.add_widget(self.label_pass)
+
+        self.password_input = TextInput(
+            password=True,
+            multiline=False,
+            size_hint=(None, None),
+            size=(280, 40),
+            background_color=get_color_from_hex("#e0e1ddff"),
+            foreground_color=get_color_from_hex("#22223bff"),
+            pos_hint={"center_x": 0.5, "top": 0.65}
+        )
+        self.add_widget(self.password_input)
+
+        self.login_btn = Button(
             text="Login",
-            size_hint=(1, 0.12),
-            background_color=get_color_from_hex("#9d4eddff"),
-            color=get_color_from_hex("#ffffffff"),  # changed to 8-digit hex
+            size_hint=(None, None),
+            size=(200, 50),
+            pos_hint={"center_x": 0.5, "top": 0.55},
+            background_color=get_color_from_hex("#488155ff"),
+            color=get_color_from_hex("#ffffffff"),
             bold=True,
             background_normal=""
         )
-        login_btn.bind(on_press=self.attempt_login)
-        layout.add_widget(login_btn)
+        self.login_btn.bind(on_press=self.attempt_login)
+        self.add_widget(self.login_btn)
 
-        back_btn = Button(
+        self.back_btn = Button(
             text="Back",
-            size_hint=(1, 0.12),
+            size_hint=(None, None),
+            size=(200, 50),
+            pos_hint={"center_x": 0.5, "top": 0.45},
             background_color=get_color_from_hex("#adb5bdff"),
-            color=get_color_from_hex("#22223bff"),  # already 8-digit hex
+            color=get_color_from_hex("#22223bff"),
             bold=True,
             background_normal=""
         )
-        back_btn.bind(on_press=lambda inst: App.get_running_app().go_to_screen("login"))
-        layout.add_widget(back_btn)
+        self.back_btn.bind(on_press=lambda inst: App.get_running_app().go_to_screen("login"))
+        self.add_widget(self.back_btn)
 
-        self.add_widget(layout)
+    def _update_bg_rect(self, *args):
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
 
     def attempt_login(self, instance):
         user_id = self.user_id_input.text.strip()
