@@ -4,7 +4,7 @@
 
 -- ---------- 1. Teachers ----------
 CREATE TABLE Teachers (
-    teacher_id INT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL
@@ -12,7 +12,7 @@ CREATE TABLE Teachers (
 
 -- ---------- 2. Students ----------
 CREATE TABLE Students (
-    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     roll_no VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE Students (
 
 -- ---------- 3. Classes ----------
 CREATE TABLE Classes (
-    class_id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id SERIAL PRIMARY KEY,
     class_name VARCHAR(100) NOT NULL,
     teacher_id INT NOT NULL,
     FOREIGN KEY (teacher_id) REFERENCES Teachers(teacher_id)
@@ -29,7 +29,7 @@ CREATE TABLE Classes (
 
 -- ---------- 4. Enrollments (Students <-> Classes) ----------
 CREATE TABLE Enrollments (
-    enrollment_id INT AUTO_INCREMENT PRIMARY KEY,
+    enrollment_id SERIAL PRIMARY KEY,
     student_id INT NOT NULL,
     class_id INT NOT NULL,
     FOREIGN KEY (student_id) REFERENCES Students(student_id),
@@ -39,11 +39,11 @@ CREATE TABLE Enrollments (
 
 -- ---------- 5. Sessions (QR linked to class occurrence) ----------
 CREATE TABLE Sessions (
-    session_id INT AUTO_INCREMENT PRIMARY KEY,
+    session_id SERIAL PRIMARY KEY,
     class_id INT NOT NULL,
     session_date DATE NOT NULL,
-    start_time DATETIME NOT NULL,
-    end_time DATETIME NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
     qr_token VARCHAR(255) UNIQUE NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (class_id) REFERENCES Classes(class_id)
@@ -51,14 +51,15 @@ CREATE TABLE Sessions (
 
 -- ---------- 6. Attendance ----------
 CREATE TABLE Attendance (
-    attendance_id INT AUTO_INCREMENT PRIMARY KEY,
+    attendance_id SERIAL PRIMARY KEY,
     session_id INT NOT NULL,
     student_id INT NOT NULL,
-    marked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (session_id) REFERENCES Sessions(session_id),
     FOREIGN KEY (student_id) REFERENCES Students(student_id),
     UNIQUE(session_id, student_id)
 );
+
 
 -- ======================================================
 -- SAMPLE QUERIES
